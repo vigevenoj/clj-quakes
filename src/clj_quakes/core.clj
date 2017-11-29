@@ -38,8 +38,13 @@
   [point]
   (first (rest (:coordinates point))))
 
+(defn hav
+  "Calculate a haversine, sin^2(θ/2)"
+  [val]
+  (Math/pow(Math/sin(/ val 2)) 2))
+
 (defn point-haversine
-  "Haversine formula for two GeoJSON Point objects"
+  "Haversine formula to calculate great-circle distance between two GeoJSON Point objects"
   [p1 p2]
   (let [R 6371 ; radius of arth in km
         delta-latitude (Math/toRadians (- (get-latitude p1) (get-latitude p2)))
@@ -50,13 +55,8 @@
     (* R 2 (Math/atan2 (Math/sqrt a) (Math/sqrt (- 1 a)))))
   )
 
-(defn- hav
-  [val]
-  (Math/pow(Math/sin(/ val 2)) 2))
-
-
 (defn fetch-quakes []
-  "Get the earthquake feed and parse it as a FeatureCollection. Return a "
+  "Get the earthquake feed and parse it as a FeatureCollection"
   (let [response
         (cheshire.core/parse-string
          (:body (client/get "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson"))
@@ -64,3 +64,13 @@
     (s/validate FeatureCollection response)
     )
   )
+
+(defn distance-from-test 
+  "Calculate how far a point is from the test point"
+  [point]
+  (point-haversine test-point point))
+
+;; This outputs the distance from the test point (in km) for every earthquake present in the feed
+;; needs improvement by also including the location and detail url
+;; and next step is to determine if the elements are within a range to be considered interesting
+;; (map distance-from-test (map :geometry (:features (fetch-quakes))))
