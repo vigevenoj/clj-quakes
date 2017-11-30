@@ -5,12 +5,14 @@
             [com.climate.geojson-schema.core :refer [FeatureCollection GeoJSON]]
             [schema.core :as s]))
 
+;; TODO extract to tests package
 (defn test-feed []
   (s/validate com.climate.geojson-schema.core/FeatureCollection
               (cheshire.core/parse-string
                 (slurp "/Users/vigevenoj/code/clojure/clj-quakes/hourly.json") true)))
 
-;; use this as a test point for haversine and such
+;; use this as a test point for haversine and such. It's in Portland.
+;; TODO extract to tests package
 (def test-point
   {:type        "Point"
    :coordinates [-122.58441925048828,
