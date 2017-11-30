@@ -4,6 +4,7 @@
             [clojure.java.io :refer [resource file]] ;; for testing
             [cheshire.core :refer :all]
             [com.climate.geojson-schema.core :refer [FeatureCollection GeoJSON]]
+            [clojurewerkz.machine-head.client :as mh]
             [schema.core :as s]))
 
 
@@ -74,3 +75,26 @@
 ;; needs improvement by also including the location and detail url
 ;; and next step is to determine if the elements are within a range to be considered interesting
 ;; (map distance-from-test (map :geometry (:features (fetch-quakes))))
+
+(def ^:const owntracks-topic "owntracks/#")
+
+(defn connect-to-broker []
+  (println "connecting to broker")
+  (mh/connect "tcp://sharkbaitextraordinaire.com:8885"))
+
+(defn parse-owntracks
+  "Parse an mqtt payload into a map with keys"
+  [^bytes payload]
+  (let [update
+  (cheshire.core/parse-string (String. payload "UTF-8") true)]
+    (println "Received owntracks update")
+    (println update)
+    (println (:tst update))))
+
+(def listen-for-owntracks
+  (let [c (connect-to-broker)]
+    (mh/subscribe c {owntracks-topic 0} (fn [^String topic meta ^bytes payload]
+                                          (parse-owntracks payload)))
+    (println (mh/connected? c))
+    (Thread/sleep 10000)
+    (mh/disconnect c)))
