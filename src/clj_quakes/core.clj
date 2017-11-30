@@ -87,7 +87,6 @@
   [^bytes payload]
   (let [update
   (cheshire.core/parse-string (String. payload "UTF-8") true)]
-    (println "Received owntracks update")
     (println update)
     (println (:tst update))))
 
@@ -95,6 +94,7 @@
   (let [c (connect-to-broker)]
     (mh/subscribe c {owntracks-topic 0} (fn [^String topic meta ^bytes payload]
                                           (parse-owntracks payload)))
+    ;; use the location data above for calculating haversine distance between location update and earthquakes
     (println (mh/connected? c))
     (Thread/sleep 10000)
     (mh/disconnect c)))
