@@ -19,6 +19,7 @@
     (println update)
     (println (:tst update))))
 
+;; TODO use command line arguments or parse env/yaml to load configuration
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
