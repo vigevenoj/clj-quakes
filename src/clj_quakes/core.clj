@@ -3,6 +3,7 @@
   (:require [clj-quakes.fetcher :as fetcher]
             [clj-http.client :as client]
             [clojure.java.io :refer [resource file]] ;; for testing
+            [clojure.tools.logging :as log]
             [cheshire.core :refer :all]
             [com.climate.geojson-schema.core :refer [FeatureCollection GeoJSON]]
             [clojurewerkz.machine-head.client :as mh]
@@ -35,17 +36,3 @@
 ;; needs improvement by also including the location and detail url
 ;; and next step is to determine if the elements are within a range to be considered interesting
 ;; (map distance-from-test (map :geometry (:features (fetch-quakes))))
-
-(defn connect-to-broker [connectstring]
-  (println "connecting to broker")
-  (mh/connect connectstring))
-
-(def listen-for-owntracks
-  (let [c (connect-to-broker "tcp://sharkbaitextraordinaire.com:8885")]
-    (mh/subscribe c {owntracks-topic 0}
-                  (fn [^String topic meta ^bytes payload]
-                    (parse-owntracks payload)))
-    ;; use the location data above for calculating haversine distance between location update and earthquakes
-    (println (mh/connected? c))
-    (Thread/sleep 10000)
-    (mh/disconnect c)))
