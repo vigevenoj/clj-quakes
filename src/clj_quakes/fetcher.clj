@@ -1,7 +1,7 @@
 (ns clj-quakes.fetcher
   (:require [clj-http.client :as client]
             [clojure.java.io :refer [resource file]] ;; for testing
-            [cheshire.core :refer :all]
+            [clojure.tools.logging :as log]
             [com.climate.geojson-schema.core :refer [FeatureCollection GeoJSON]]
             [schema.core :as s]))
 

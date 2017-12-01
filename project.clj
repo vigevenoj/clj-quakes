@@ -9,6 +9,7 @@
                  [clojurewerkz/quartzite "2.0.0"]
                  [com.climate/geojson-schema "0.2.1"]
                  [http-kit "2.2.0"]
+                 [org.clojure/tools.logging "0.4.0"]
                  [org.clojure/clojure "1.8.0"]]
   :main ^:skip-aot clj-quakes.core
   :target-path "target/%s"
