@@ -63,3 +63,28 @@
   [point]
   (point-haversine test-point point))
 
+(defn newness-filter
+  "Filter out quakes older than five minutes"
+  [quakes]
+  ;; should be true if newer than 1000*60*5
+  (filter #(<
+            (- (System/currentTimeMillis) (->> % :properties :time))
+            (* 60 60 1000)) ; 60 minutes in milliseconds
+          quakes))
+
+;; this prints out the distance from the test point to each earthquake
+;; we should use this for calculating if the earthquake is close enough to care about
+(map clj-quakes.fetcher/distance-from-test (->> (:features (clj-quakes.fetcher/test-feed)) (map :geometry)))
+
+;(defn millis-ago [timestamp] (- (System/currentTimeMillis) timestamp))
+;(map millis-ago ((:features (clj-quakes.fetcher/test-feed)) (map :properties) (map :time)))
+; below: filter returns collection of points where points are less than 1000km from test-point
+;(filter #(< (clj-quakes.fetcher/distance-from-test %) 1000) (->> (:features (clj-quakes.fetcher/test-feed)) (map :geometry)))
+; below: filter returns collection of quakes (maps) where points are less than 1000km from test-point
+;(filter #(< (clj-quakes.fetcher/distance-from-test (:geometry %)) 1000) (:features (clj-quakes.fetcher/test-feed)) )
+(defn nearness-filter
+  [collection distance]
+  (filter #(<
+            (clj-quakes.fetcher/distance-from-test (:geometry %))
+            distance)
+          collection ))
