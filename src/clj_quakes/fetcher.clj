@@ -83,8 +83,8 @@
 ; below: filter returns collection of quakes (maps) where points are less than 1000km from test-point
 ;(filter #(< (clj-quakes.fetcher/distance-from-test (:geometry %)) 1000) (:features (clj-quakes.fetcher/test-feed)) )
 (defn nearness-filter
-  [collection distance]
+  [quakes location distance]
   (filter #(<
-            (clj-quakes.fetcher/distance-from-test (:geometry %))
+            (clj-quakes.fetcher/point-haversine location (:geometry %))
             distance)
-          collection ))
+          quakes ))
