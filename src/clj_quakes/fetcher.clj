@@ -68,8 +68,8 @@
   [quakes]
   ;; should be true if newer than 1000*60*5
   (filter #(<
-            (- (System/currentTimeMillis) (->> % :properties :time))
-            (* 60 60 1000)) ; 60 minutes in milliseconds
+            (- (System/currentTimeMillis) (-> % :properties :time))
+            (* 24 60 60 1000)) ; 60 minutes in milliseconds
           quakes))
 
 ;; this prints out the distance from the test point to each earthquake
