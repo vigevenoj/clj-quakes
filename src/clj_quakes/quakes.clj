@@ -1,4 +1,4 @@
-(ns clj-quakes.fetcher
+(ns clj-quakes.quakes
   (:require [clj-http.client :as client]
             [clojure.java.io :refer [resource file]] ;; for testing
             [clojure.tools.logging :as log]
@@ -74,7 +74,7 @@
 
 ;; this prints out the distance from the test point to each earthquake
 ;; we should use this for calculating if the earthquake is close enough to care about
-(map clj-quakes.fetcher/distance-from-test (->> (:features (clj-quakes.fetcher/test-feed)) (map :geometry)))
+(map clj-quakes.quakes/distance-from-test (->> (:features (clj-quakes.quakes/test-feed)) (map :geometry)))
 
 ;(defn millis-ago [timestamp] (- (System/currentTimeMillis) timestamp))
 ;(map millis-ago ((:features (clj-quakes.fetcher/test-feed)) (map :properties) (map :time)))
@@ -85,6 +85,6 @@
 (defn nearness-filter
   [quakes location distance]
   (filter #(<
-            (clj-quakes.fetcher/point-haversine location (:geometry %))
+            (clj-quakes.quakes/point-haversine location (:geometry %))
             distance)
           quakes ))

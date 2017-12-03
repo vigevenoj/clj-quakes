@@ -1,8 +1,9 @@
 (ns clj-quakes.core
   (:gen-class)
-  (:require [clj-quakes.fetcher :as fetcher]
+  (:require [clj-quakes.quakes :as quakes]
             [clj-http.client :as client]
             [clojure.java.io :refer [resource file]] ;; for testing
+            [clojure.core.async :as async  :refer [>! <! >!! <!! go chan buffer close! thread alts! alts!! timeout]]
             [clojure.tools.logging :as log]
             [cheshire.core :refer :all]
             [com.climate.geojson-schema.core :refer [FeatureCollection GeoJSON]]
@@ -16,20 +17,19 @@
   "Parse an mqtt payload into a map with keys"
   [^bytes payload]
   (let [update
-        (cheshire.core/parse-string (String. payload "UTF-8") true)]
-    (println update)
-    (println (:tst update))))
+        (cheshire.core/parse-string (String. payload "UTF-8") true)]))
 
 ;; TODO use command line arguments or parse env/yaml to load configuration
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
   (println "Hello, World!")
-  (let [id   (mh/generate-id)
-        conn (mh/connect broker-url id)]
-    (mh/subscribe conn {owntracks-topic 0}
-                  (fn [^String topic meta ^bytes payload]
-                    (parse-owntracks payload)))))
+;  (let [id   (mh/generate-id)
+;        conn (mh/connect broker-url id)]
+;    (mh/subscribe conn {owntracks-topic 0}
+;                  (fn [^String topic meta ^bytes payload]
+;                    (parse-owntracks payload))))
+  )
 
 
 ;; This outputs the distance from the test point (in km) for every earthquake present in the feed
