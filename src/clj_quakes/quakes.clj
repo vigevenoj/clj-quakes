@@ -49,7 +49,7 @@
                            (* (Math/cos latitude1) (Math/cos latitude2) (hav delta-longitude)))]
     (* R 2 (Math/atan2 (Math/sqrt a) (Math/sqrt (- 1 a))))))
 
-(defn fetch-quakes []
+(defn fetch []
   "Get the earthquake feed and parse it as a FeatureCollection"
   (let [response
         (cheshire.core/parse-string
@@ -58,18 +58,19 @@
          true)]
     (s/validate FeatureCollection response)))
 
+;; TODO move this into test package?
 (defn distance-from-test
   "Calculate how far a point is from the test point"
   [point]
   (point-haversine test-point point))
 
 (defn newness-filter
-  "Filter out quakes older than five minutes"
+  "Filter out quakes older than six minutes"
   [quakes]
   ;; should be true if newer than 1000*60*5
   (filter #(<
             (- (System/currentTimeMillis) (-> % :properties :time))
-            (* 6 60 1000)) ; 60 minutes in milliseconds
+            (* 6 60 1000)) ; 6 minutes in milliseconds
           quakes))
 
 ;; this prints out the distance from the test point to each earthquake
@@ -77,11 +78,11 @@
 (map clj-quakes.quakes/distance-from-test (->> (:features (clj-quakes.quakes/test-feed)) (map :geometry)))
 
 ;(defn millis-ago [timestamp] (- (System/currentTimeMillis) timestamp))
-;(map millis-ago ((:features (clj-quakes.fetcher/test-feed)) (map :properties) (map :time)))
+;(map millis-ago ((:features (clj-quakes.quakes/test-feed)) (map :properties) (map :time)))
 ; below: filter returns collection of points where points are less than 1000km from test-point
-;(filter #(< (clj-quakes.fetcher/distance-from-test %) 1000) (->> (:features (clj-quakes.fetcher/test-feed)) (map :geometry)))
+;(filter #(< (clj-quakes.quakes/distance-from-test %) 1000) (->> (:features (clj-quakes.quakes/test-feed)) (map :geometry)))
 ; below: filter returns collection of quakes (maps) where points are less than 1000km from test-point
-;(filter #(< (clj-quakes.fetcher/distance-from-test (:geometry %)) 1000) (:features (clj-quakes.fetcher/test-feed)) )
+;(filter #(< (clj-quakes.quakes/distance-from-test (:geometry %)) 1000) (:features (clj-quakes.quakes/test-feed)) )
 (defn nearness-filter
   [quakes location distance]
   (filter #(<

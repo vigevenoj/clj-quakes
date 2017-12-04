@@ -28,7 +28,12 @@
   [ctx]
   (comment "does nothing")
   ; This expression returns quakes that occurred within the past 6 minutes and within 1000km:
-  ;(clj-quakes.quakes/nearness-filter (clj-quakes.quakes/newness-filter (:features (clj-quakes.quakes/fetch-quakes))) clj-quakes.quakes/test-point 1000)
+  ;(clj-quakes.quakes/nearness-filter (clj-quakes.quakes/newness-filter (:features (clj-quakes.quakes/fetch))) clj-quakes.quakes/test-point 1000)
+  ; we should also filter the quakes using a closer nearness-filter and a magnitude filter?
+  ; or do like in the java version and just drop the fetched earthquakes onto a queue and analyze them later
+  ; analysis side would pop quakes off queue, determine closest monitored location to quake,
+  ; and then determine if it was 'interesting' or 'worrisome'
+  ; then drop the interesting/worrisome quakes onto a queue for outbound notifications
   (println "fetch job is running")) ; we should log/warn this instead of println
 
 ;; TODO use command line arguments or parse env/yaml to load configuration
@@ -60,4 +65,4 @@
 ;; This outputs the distance from the test point (in km) for every earthquake present in the feed
 ;; needs improvement by also including the location and detail url
 ;; and next step is to determine if the elements are within a range to be considered interesting
-;; (map distance-from-test (map :geometry (:features (fetch-quakes))))
+;; (map distance-from-test (map :geometry (:features (fetch))))
