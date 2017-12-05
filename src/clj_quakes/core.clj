@@ -27,6 +27,14 @@
 (defjob FetchJob
   [ctx]
   (comment "does nothing")
+  (let [quakes] (:features clj-quakes.quakes/fetch)
+  ; filter out older quakes
+  ; filter out smaller quakes
+  ; filter out quakes farther than "interesting" km away 
+  ; filter out quakes closer than "worrisome" km away
+  ; do something for each "interesting" quake
+  ; do something else for each "worrisome" quake
+)
   ; This expression returns quakes that occurred within the past 6 minutes and within 1000km:
   ;(clj-quakes.quakes/nearness-filter (clj-quakes.quakes/newness-filter (:features (clj-quakes.quakes/fetch))) clj-quakes.quakes/test-point 1000)
   ; we should also filter the quakes using a closer nearness-filter and a magnitude filter?
