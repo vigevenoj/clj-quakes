@@ -64,7 +64,7 @@
   [point]
   (point-haversine test-point point))
 
-(defn newness-filter
+(defn newer?
   "Filter out quakes older than six minutes"
   [quakes]
   ;; should be true if newer than 1000*60*5
