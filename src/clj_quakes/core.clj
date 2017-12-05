@@ -18,6 +18,17 @@
 (def ^:const owntracks-topic "owntracks/#")
 (def ^:const broker-url "tcp://sharkbaitextraordinaire.com:8885") ;; figure out how to use a TLS-secured connection
 
+(def hood
+  {:type        "Point"
+   :coordinates [-121.695728,
+                 45.37476]})
+(def helens
+  {:type "Point"
+   :coordinates [-122.189941,
+                  46.197419]})
+
+(def monitored-locations '(hood helens))
+
 (defn parse-owntracks
   "Parse an mqtt payload into a map with keys"
   [^bytes payload]
@@ -27,7 +38,7 @@
 (defjob FetchJob
   [ctx]
   (comment "does nothing")
-  (let [quakes] (:features clj-quakes.quakes/fetch)
+  (let [quakes (clj-quakes.quakes/newer? (:features clj-quakes.quakes/fetch))]
   ; filter out older quakes
   ; filter out smaller quakes
   ; filter out quakes farther than "interesting" km away 
@@ -36,7 +47,7 @@
   ; do something else for each "worrisome" quake
 )
   ; This expression returns quakes that occurred within the past 6 minutes and within 1000km:
-  ;(clj-quakes.quakes/nearness-filter (clj-quakes.quakes/newness-filter (:features (clj-quakes.quakes/fetch))) clj-quakes.quakes/test-point 1000)
+  ;(clj-quakes.quakes/nearness-filter (clj-quakes.quakes/new? (:features (clj-quakes.quakes/fetch))) clj-quakes.quakes/test-point 1000)
   ; we should also filter the quakes using a closer nearness-filter and a magnitude filter?
   ; or do like in the java version and just drop the fetched earthquakes onto a queue and analyze them later
   ; analysis side would pop quakes off queue, determine closest monitored location to quake,
