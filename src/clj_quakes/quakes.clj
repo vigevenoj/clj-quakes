@@ -9,7 +9,7 @@
 (defn test-feed []
   (s/validate com.climate.geojson-schema.core/FeatureCollection
               (cheshire.core/parse-string
-                (slurp "/Users/vigevenoj/code/clojure/clj-quakes/hourly.json") true)))
+                (slurp  "hourly.json") true)))
 
 ;; use this as a test point for haversine and such. It's in Portland.
 ;; TODO extract to tests package
