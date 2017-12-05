@@ -27,7 +27,7 @@
    :coordinates [-122.189941,
                   46.197419]})
 
-(def monitored-locations '(hood helens))
+(def monitored-locations (list hood helens))
 
 (defn parse-owntracks
   "Parse an mqtt payload into a map with keys"
