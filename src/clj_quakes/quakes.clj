@@ -84,8 +84,17 @@
 ; below: filter returns collection of quakes (maps) where points are less than 1000km from test-point
 ;(filter #(< (clj-quakes.quakes/distance-from-test (:geometry %)) 1000) (:features (clj-quakes.quakes/test-feed)) )
 (defn nearness-filter
+  "filter for quakes closer than a specified distance"
   [quakes location distance]
   (filter #(<
             (clj-quakes.quakes/point-haversine location (:geometry %))
             distance)
           quakes ))
+
+(defn magnitude-filter
+  "filter for quakes bigger than a given magnitude"
+  [quakes] [mag]
+  (filter #(>
+            (-> % :properties :mag)
+            mag)
+          quakes))
