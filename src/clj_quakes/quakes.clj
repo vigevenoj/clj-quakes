@@ -98,3 +98,15 @@
             (-> % :properties :mag)
             mag)
           quakes))
+
+(defn closest
+  "Calculate minimum distance between a quake and the monitored locations"
+  [locations quake]
+  (let [c (partial quakes/point-haversine (-> quake :geometry))]
+    (map c locations)))
+
+(defn quake-distances
+  "Calculate distance between locations and quakes"
+  [locations quakes]
+  (let [d (partial closest locations)]
+    (map d quakes)))
