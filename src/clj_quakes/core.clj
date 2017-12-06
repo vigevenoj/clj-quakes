@@ -37,7 +37,7 @@
 
 (defjob FetchJob
   [ctx]
-  (comment "does nothing")
+  (comment "Fetch quakes, filter interesting/worrisome ones, and deal with them")
   (let [quakes (clj-quakes.quakes/newer? (:features clj-quakes.quakes/fetch))]
   ; filter out older quakes
   ; filter out smaller quakes
