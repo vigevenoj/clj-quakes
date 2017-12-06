@@ -93,7 +93,7 @@
 
 (defn magnitude-filter
   "filter for quakes bigger than a given magnitude"
-  [quakes] [mag]
+  [quakes mag]
   (filter #(>
             (-> % :properties :mag)
             mag)
@@ -102,8 +102,8 @@
 (defn closest
   "Calculate minimum distance between a quake and the monitored locations"
   [locations quake]
-  (let [c (partial quakes/point-haversine (-> quake :geometry))]
-    (map c locations)))
+  (let [c (partial point-haversine (-> quake :geometry))]
+    (apply min (map c locations))))
 
 (defn quake-distances
   "Calculate distance between locations and quakes"
