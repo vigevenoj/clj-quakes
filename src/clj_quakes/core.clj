@@ -4,6 +4,7 @@
             [clj-http.client :as client]
             [clojure.java.io :refer [resource file]] ;; for testing
             [clojure.core.async :as async  :refer [>! <! >!! <!! go chan buffer close! thread alts! alts!! timeout]]
+            [clojure.edn :as edn]
             [clojure.tools.logging :as log]
             [clojurewerkz.quartzite.jobs :as j]
             [clojurewerkz.quartzite.jobs :refer [defjob]]
@@ -50,12 +51,6 @@
 ;; handle worrisome quakes
 ;; handle quakes that are not worrisome but are interesting
 ))
-  ; filter out older quakes
-  ; filter out smaller quakes
-  ; filter out quakes farther than "interesting" km away 
-  ; filter out quakes closer than "worrisome" km away
-  ; do something for each "interesting" quake
-  ; do something else for each "worrisome" quake
 
   ; This expression returns quakes that occurred within the past 6 minutes and within 1000km:
   ;(quakes/nearness-filter (quakes/newer? (:features (quakes/fetch))) quakes/test-point 1000)
@@ -96,3 +91,9 @@
 ;; needs improvement by also including the location and detail url
 ;; and next step is to determine if the elements are within a range to be considered interesting
 ;; (map distance-from-test (map :geometry (:features (fetch))))
+
+(defn get-channel
+  "Look up a slack channel by its name"
+  [name]
+  (let [channels (-> (clj-slack.channels/list connection) channels)]
+    (filter #(= (:name %) name) channels)))
