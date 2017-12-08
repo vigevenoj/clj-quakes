@@ -2,6 +2,10 @@
   (:gen-class)
   (:require [clj-quakes.quakes :as quakes]
             [clj-http.client :as client]
+            [clj-slack.auth]
+            [clj-slack.channels]
+            [clj-slack.chat]
+            [clj-slack.users]
             [clojure.java.io :refer [resource file]] ;; for testing
             [clojure.core.async :as async  :refer [>! <! >!! <!! go chan buffer close! thread alts! alts!! timeout]]
             [clojure.edn :as edn]
@@ -16,6 +20,8 @@
             [clojurewerkz.machine-head.client :as mh]
             [schema.core :as s]))
 
+(def config (edn/read-string(slurp "config-local.edn")))
+(def connection {:api-url "https://slack.com/api" :token (-> config :slack :token)})
 (def ^:const owntracks-topic "owntracks/#")
 (def ^:const broker-url "tcp://sharkbaitextraordinaire.com:8885") ;; figure out how to use a TLS-secured connection
 
@@ -34,6 +40,8 @@
   "Parse an mqtt payload into a map with keys"
   [^bytes payload]
   (let [update
+        ; instead of printing this, we should update a ref
+        ; which we then merge into the monitored-locations vector
         (cheshire.core/parse-string (String. payload "UTF-8") true)]))
 
 (defjob FetchJob
@@ -79,11 +87,11 @@
                                    (cron-schedule "0 0/5 * * * ?	"))))]
     (qs/schedule s job trigger))
 
-;  (let [id   (mh/generate-id)
-;        conn (mh/connect broker-url id)]
-;    (mh/subscribe conn {owntracks-topic 0}
-;                  (fn [^String topic meta ^bytes payload]
-;                    (parse-owntracks payload))))
+  (let [id   (mh/generate-id)
+        conn (mh/connect (-> config :mqtt :url)id)]
+    (mh/subscribe conn {owntracks-topic 0}
+                  (fn [^String topic meta ^bytes payload]
+                    (parse-owntracks payload))))
   )
 
 
@@ -92,8 +100,11 @@
 ;; and next step is to determine if the elements are within a range to be considered interesting
 ;; (map distance-from-test (map :geometry (:features (fetch))))
 
+(defn connect-to-slack []
+  )
+
 (defn get-channel
   "Look up a slack channel by its name"
   [name]
-  (let [channels (-> (clj-slack.channels/list connection) channels)]
+  (let [channels (-> (clj-slack.channels/list connection) :channels)]
     (filter #(= (:name %) name) channels)))
