@@ -11,7 +11,8 @@
                  [http-kit "2.2.0"]
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/core.async "0.3.465"]
-                 [org.clojure/tools.logging "0.4.0"]]
+                 [org.clojure/tools.logging "0.4.0"]
+                 [org.julienxx/clj-slack "0.5.5"]]
   :main ^:skip-aot clj-quakes.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
