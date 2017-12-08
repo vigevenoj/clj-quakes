@@ -34,6 +34,20 @@
 
 (def monitored-locations (list hood helens))
 
+(defn get-channel
+  "Look up a slack channel by its name"
+  [name]
+  (let [channels (-> (clj-slack.channels/list connection) :channels)]
+    (first (filter #(= (:name %) name) channels))))
+
+(defn handle-quake
+  [quake]
+  (let [channel (get-channel (-> config :slack :channel))
+        title (-> quake :properties :title)
+        url (-> quake :properties :url)]
+    (clj-slack.chat/post-message connection (-> channel :id)
+                                 (str "New earthquake " title ". More info at " url))))
+
 (defn parse-owntracks
   "Parse an mqtt payload into a map with keys"
   [^bytes payload]
@@ -50,13 +64,7 @@
                 (quakes/closest monitored-locations %)
                                        (-> config :usgs :interesting-distance-threshold)) ; define this as a constant somewhere: interesting-quake-distance-km
               quakes)]
-    (let [worrisome-quakes (filter #(<
-                                      (quakes/closest monitored-locations %)
-                                     (-> config :worrisome-distance-threshold))
-                                    interesting-quakes)])
-;; handle worrisome quakes
-;; handle quakes that are not worrisome but are interesting
-))
+      (map handle-quake interesting-quakes)))
 
   ; This expression returns quakes that occurred within the past 6 minutes and within 1000km:
   ;(quakes/nearness-filter (quakes/newer? (:features (quakes/fetch))) quakes/test-point 1000)
@@ -97,12 +105,3 @@
 ;; needs improvement by also including the location and detail url
 ;; and next step is to determine if the elements are within a range to be considered interesting
 ;; (map distance-from-test (map :geometry (:features (fetch))))
-
-(defn connect-to-slack []
-  )
-
-(defn get-channel
-  "Look up a slack channel by its name"
-  [name]
-  (let [channels (-> (clj-slack.channels/list connection) :channels)]
-    (filter #(= (:name %) name) channels)))
