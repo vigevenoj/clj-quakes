@@ -1,6 +1,6 @@
 # clj-quakes
 
-FIXME: description
+Post to Slack when earthquakes happen near places you care about
 
 ## Installation
 
