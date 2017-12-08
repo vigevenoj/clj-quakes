@@ -1,0 +1,16 @@
+{:mqtt {
+         :username ""
+         :password ""
+         :url ""
+         :trustStorePassword ""
+         :topic ""
+         }
+ :slack {
+          :token ""
+          :channel ""
+          }
+ :usgs {
+         :interesting-distance-threshold 200
+         :worrisome-distance-threshold 100
+         }
+ :initial-locations []}
