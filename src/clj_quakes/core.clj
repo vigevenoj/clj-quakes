@@ -22,8 +22,6 @@
 
 (def config (edn/read-string(slurp "config-local.edn")))
 (def connection {:api-url "https://slack.com/api" :token (-> config :slack :token)})
-(def ^:const owntracks-topic "owntracks/#")
-(def ^:const broker-url "tcp://sharkbaitextraordinaire.com:8885") ;; figure out how to use a TLS-secured connection
 
 (def hood
   {:type        "Point"
@@ -50,11 +48,11 @@
   (let [quakes (:features (quakes/fetch))] ; when done testing, add back (quakes/newer? (:features (quakes/fetch))
     (let [interesting-quakes (filter #(<
                 (quakes/closest monitored-locations %)
-                500) ; define this as a constant somewhere: interesting-quake-distance-km
+                                       (-> config :usgs :interesting-distance-threshold)) ; define this as a constant somewhere: interesting-quake-distance-km
               quakes)]
     (let [worrisome-quakes (filter #(<
                                       (quakes/closest monitored-locations %)
-                                      150)
+                                     (-> config :worrisome-distance-threshold))
                                     interesting-quakes)])
 ;; handle worrisome quakes
 ;; handle quakes that are not worrisome but are interesting
@@ -89,7 +87,7 @@
 
   (let [id   (mh/generate-id)
         conn (mh/connect (-> config :mqtt :url)id)]
-    (mh/subscribe conn {owntracks-topic 0}
+    (mh/subscribe conn {(-> config :mqtt :topic) 0}
                   (fn [^String topic meta ^bytes payload]
                     (parse-owntracks payload))))
   )
