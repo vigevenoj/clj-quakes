@@ -38,22 +38,25 @@
 (defjob FetchJob
   [ctx]
   (comment "Fetch quakes, filter interesting/worrisome ones, and deal with them")
-  (let [quakes  (:features (quakes/fetch))] ; when done testing, add back (quakes/newer? (:features (quakes/fetch))
+  (let [quakes (:features (quakes/fetch))] ; when done testing, add back (quakes/newer? (:features (quakes/fetch))
     (let [interesting-quakes (filter #(<
                 (quakes/closest monitored-locations %)
                 500) ; define this as a constant somewhere: interesting-quake-distance-km
               quakes)]
-      let [worrisome-quakes (filter #(<
+    (let [worrisome-quakes (filter #(<
                                       (quakes/closest monitored-locations %)
-                                      150) ; define this as a constant somewhere: worrisome-quake-distance-km
+                                      150)
                                     interesting-quakes)])
+;; handle worrisome quakes
+;; handle quakes that are not worrisome but are interesting
+))
   ; filter out older quakes
   ; filter out smaller quakes
   ; filter out quakes farther than "interesting" km away 
   ; filter out quakes closer than "worrisome" km away
   ; do something for each "interesting" quake
   ; do something else for each "worrisome" quake
-)
+
   ; This expression returns quakes that occurred within the past 6 minutes and within 1000km:
   ;(quakes/nearness-filter (quakes/newer? (:features (quakes/fetch))) quakes/test-point 1000)
   ; we should also filter the quakes using a closer nearness-filter and a magnitude filter?
