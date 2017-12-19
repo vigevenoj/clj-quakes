@@ -23,6 +23,7 @@
 (def config (edn/read-string(slurp "config-local.edn")))
 (def connection {:api-url "https://slack.com/api" :token (-> config :slack :token)})
 
+; TODO get monitored locations from configuration map
 (def hood
   {:type        "Point"
    :coordinates [-121.695728,
@@ -75,11 +76,10 @@
   ; then drop the interesting/worrisome quakes onto a queue for outbound notifications
   (println "fetch job is running")) ; we should log/warn this instead of println
 
-;; TODO use command line arguments or parse env/yaml to load configuration
+;; TODO use command line arguments to specify what our configuration is
 (defn -main
-  "I don't do a whole lot ... yet."
+  "Load configuration, start timer for fetching quakes and subscribe to location updates"
   [& args]
-  (println "Hello, World!")
 
   ;; using quartzite to run the fetch job evey five minutes
   (let [s (-> (qs/initialize) qs/start)
