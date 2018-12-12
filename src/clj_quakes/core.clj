@@ -55,7 +55,8 @@
   (let [update
         ; instead of printing this, we should update a ref
         ; which we then merge into the monitored-locations vector
-        (cheshire.core/parse-string (String. payload "UTF-8") true)]))
+        (cheshire.core/parse-string (String. payload "UTF-8") true)]
+    (println (format "[consumer] received %s " (String. payload "UTF-8")))))
 
 (defjob FetchJob
   [ctx]
@@ -97,8 +98,7 @@
         conn (mh/connect (-> config :mqtt :url)id)]
     (mh/subscribe conn {(-> config :mqtt :topic) 0}
                   (fn [^String topic meta ^bytes payload]
-                    (parse-owntracks payload))))
-  )
+                    (parse-owntracks payload)))))
 
 
 ;; This outputs the distance from the test point (in km) for every earthquake present in the feed
