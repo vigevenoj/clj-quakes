@@ -9,10 +9,10 @@
                  [clojurewerkz/quartzite "2.1.0"]
                  [com.climate/geojson-schema "0.2.1"]
                  [http-kit "2.3.0"]
-                 [org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojure "1.10.0"]
                  [org.clojure/core.async "0.4.490"]
-                 [org.clojure/tools.logging "0.4.1"]
-                 [org.julienxx/clj-slack "0.6.2"]
+                 [org.clojure/tools.logging "0.5.0-alpha.1"]
+                 [org.julienxx/clj-slack "0.6.3"]
                  [io.riemann/riemann-java-client "0.5.0"]
                  [riemann-clojure-client "0.5.0"]]
   :main ^:skip-aot clj-quakes.core
